@@ -139,8 +139,6 @@ func main() {
 		os.MkdirAll(strings.Join([]string{strconv.Itoa(year), month.String(), strconv.Itoa(day)}, "/"), mode)
 
 		log.Printf("Copying %s to %s", fileinfo.Path, newpath)
-		//we don't care about waiting for the copy to finish, so we dispatch
-		//to a goroutine
-		go Copy(fileinfo.Path, newpath)
+		Copy(fileinfo.Path, newpath)
 	}
 }
