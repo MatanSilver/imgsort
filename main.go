@@ -4,7 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	//"fmt"
-	"github.com/urfave/cli"
+	//"github.com/urfave/cli"
 	"io"
 	"io/ioutil"
 	"log"
@@ -80,11 +80,11 @@ func ls_imgs(dir string) []FileInfoWrapper {
 				x, err := exif.Decode(f)
 				if err != nil { //if exif loads improperly (i.e. header missing)
 												//we will keep the default date
-					log.Printf("[file: %s] %s\n", fullpath, err)
+					log.Printf("Error in file %s: %s\n", fullpath, err)
 				} else { //if exif loads properly, get the date
 					tm, err = x.DateTime()
 					if err != nil {
-						log.Printf("[file: %s] %s\n", fullpath, err)
+						log.Printf("Error in file %s: %s\n", fullpath, err)
 					}
 				}
 
@@ -109,7 +109,7 @@ func ls_imgs(dir string) []FileInfoWrapper {
 
 func main() {
 	//fmt.Println("test")
-	_ = sha256.New()
+	/*_ = sha256.New()
 	app := cli.NewApp()
 
 	app.Flags = []cli.Flag{
@@ -125,6 +125,7 @@ func main() {
 	}
 
 	app.Run(os.Args)
+	*/
 	fileinfos := ls_imgs(".")
 	//fmt.Printf("%v\n", fileinfos)
 	//return
