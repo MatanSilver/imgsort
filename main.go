@@ -22,22 +22,24 @@ import (
 // copy file attributes.
 func Copy(src, dst string) error {
 	in, err := os.Open(src)
+	defer in.Close()
 	if err != nil {
 		return err
 	}
-	defer in.Close()
 
 	out, err := os.Create(dst)
+	defer out.Close()
 	if err != nil {
 		return err
 	}
-	defer out.Close()
 
 	_, err = io.Copy(out, in)
+	defer out.Close()
 	if err != nil {
 		return err
 	}
-	return out.Close()
+	//return out.Close()
+	return nil
 }
 
 type FileInfoWrapper struct {
