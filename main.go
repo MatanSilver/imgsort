@@ -139,7 +139,10 @@ func main() {
 		newpath := strings.Join([]string{strconv.Itoa(year), month.String(), strconv.Itoa(day), fileinfo.Info.Name()}, "/")
 		mode := os.FileMode(0777)
 		os.MkdirAll(strings.Join([]string{strconv.Itoa(year), month.String(), strconv.Itoa(day)}, "/"), mode)
-
+		if _, err := os.Stat(newpath); os.IsNotExist(err) {
+  		log.Printf("File %s already exists, copying to %s_copy", newpath, newpath)
+			newpath = newpath + "copy"
+		}
 		log.Printf("Copying %s to %s", fileinfo.Path, newpath)
 		Copy(fileinfo.Path, newpath)
 	}
