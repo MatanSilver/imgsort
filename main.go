@@ -110,8 +110,6 @@ func ls_imgs(dir string) []FileInfoWrapper {
 }
 
 func main() {
-	//fmt.Println("test")
-	//_ = sha256.New()
 	app := cli.NewApp()
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
