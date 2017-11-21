@@ -25,4 +25,13 @@ func TestCopy(t *testing.T) {
 	if "this is a test\n" != recovered_string {
 		t.Errorf("Recovered string doesn't match written string")
 	}
+
+	err = os.Remove("./testfile.txt")
+	if err != nil {
+		panic(err)
+	}
+	err = os.Remove("./newtestfile.txt")
+	if err != nil {
+		panic(err)
+	}
 }
