@@ -81,7 +81,7 @@ func ls_imgs(dir string) []FileInfoWrapper {
 				tm := time.Date(2000, time.January, 1, 1, 1, 1, 1, loc)
 				x, err := exif.Decode(f)
 				if err != nil { //if exif loads improperly (i.e. header missing)
-												//we will keep the default date
+					//we will keep the default date
 					log.Printf("Error in file %s: %s\n", fullpath, err)
 				} else { //if exif loads properly, get the date
 					tm, err = x.DateTime()
@@ -140,7 +140,7 @@ func main() {
 		mode := os.FileMode(0777)
 		os.MkdirAll(strings.Join([]string{strconv.Itoa(year), month.String(), strconv.Itoa(day)}, "/"), mode)
 		if _, err := os.Stat(newpath); os.IsNotExist(err) {
-  		log.Printf("File %s already exists, copying to %s_copy", newpath, newpath)
+			log.Printf("File %s already exists, copying to %s_copy", newpath, newpath)
 			newpath = newpath + "copy"
 		}
 		log.Printf("Copying %s to %s", fileinfo.Path, newpath)
