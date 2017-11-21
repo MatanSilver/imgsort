@@ -4,7 +4,9 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	//"fmt"
-	//"github.com/urfave/cli"
+	"github.com/rwcarlsen/goexif/exif"
+	"github.com/urfave/cli"
+	"gopkg.in/h2non/filetype.v1"
 	"io"
 	"io/ioutil"
 	"log"
@@ -12,15 +14,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	//"syscall"
-	"gopkg.in/h2non/filetype.v1"
-	//"github.com/djherbis/atime"
-	"github.com/rwcarlsen/goexif/exif"
 )
 
 // Copy the src file to dst. Any existing file will be overwritten and will not
 // copy file attributes.
-func Copy(src, dst string) error {
+func Copy(src, dst string, nopreserve bool) error {
 	in, err := os.Open(src)
 	defer in.Close()
 	if err != nil {
@@ -38,7 +36,9 @@ func Copy(src, dst string) error {
 	if err != nil {
 		return err
 	}
-	//return out.Close()
+	if nopreserve == true {
+		os.Remove(src)
+	}
 	return nil
 }
 
@@ -111,39 +111,35 @@ func ls_imgs(dir string) []FileInfoWrapper {
 
 func main() {
 	//fmt.Println("test")
-	/*_ = sha256.New()
+	//_ = sha256.New()
 	app := cli.NewApp()
-
 	app.Flags = []cli.Flag{
-		cli.StringFlag{
-			Name:  "lang",
-			Value: "english",
-			Usage: "language for the greeting",
+		cli.BoolFlag{
+			Name:  "nopreserve",
+			Usage: "Discard original files after copying",
 		},
 	}
 
 	app.Action = func(c *cli.Context) error {
+		nopreserve := c.Bool("nopreserve")
+		fileinfos := ls_imgs(".")
+		for _, fileinfo := range fileinfos {
+			//we want to read image data
+			//fmt.Println(fileinfo.Info.ModTime())
+			//year, month, day := fileinfo.Info.ModTime().Date()
+			year, month, day := fileinfo.Created.Date()
+			newpath := strings.Join([]string{strconv.Itoa(year), month.String(), strconv.Itoa(day), fileinfo.Info.Name()}, "/")
+			mode := os.FileMode(0777)
+			os.MkdirAll(strings.Join([]string{strconv.Itoa(year), month.String(), strconv.Itoa(day)}, "/"), mode)
+			if _, err := os.Stat(newpath); os.IsNotExist(err) {
+				log.Printf("File %s already exists, copying to %s_copy", newpath, newpath)
+				newpath = newpath + "copy"
+			}
+			log.Printf("Copying %s to %s", fileinfo.Path, newpath)
+			Copy(fileinfo.Path, newpath, nopreserve)
+		}
 		return nil
 	}
 
 	app.Run(os.Args)
-	*/
-	fileinfos := ls_imgs(".")
-	//fmt.Printf("%v\n", fileinfos)
-	//return
-	for _, fileinfo := range fileinfos {
-		//we want to read image data
-		//fmt.Println(fileinfo.Info.ModTime())
-		//year, month, day := fileinfo.Info.ModTime().Date()
-		year, month, day := fileinfo.Created.Date()
-		newpath := strings.Join([]string{strconv.Itoa(year), month.String(), strconv.Itoa(day), fileinfo.Info.Name()}, "/")
-		mode := os.FileMode(0777)
-		os.MkdirAll(strings.Join([]string{strconv.Itoa(year), month.String(), strconv.Itoa(day)}, "/"), mode)
-		if _, err := os.Stat(newpath); os.IsNotExist(err) {
-			log.Printf("File %s already exists, copying to %s_copy", newpath, newpath)
-			newpath = newpath + "copy"
-		}
-		log.Printf("Copying %s to %s", fileinfo.Path, newpath)
-		Copy(fileinfo.Path, newpath)
-	}
 }
