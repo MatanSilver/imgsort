@@ -118,11 +118,16 @@ func main() {
 			Name:  "nopreserve",
 			Usage: "Discard original files after copying",
 		},
+		cli.StringFlag{
+			Name:	"path",
+			Usage: "Path to operate in",
+			Value:	".",
+		},
 	}
 
 	app.Action = func(c *cli.Context) error {
 		nopreserve := c.Bool("nopreserve")
-		fileinfos := ls_imgs(".")
+		fileinfos := ls_imgs(c.String("path"))
 		for _, fileinfo := range fileinfos {
 			//we want to read image data
 			//fmt.Println(fileinfo.Info.ModTime())
