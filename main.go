@@ -1,12 +1,6 @@
 package main
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
-	//"fmt"
-	"github.com/rwcarlsen/goexif/exif"
-	"github.com/urfave/cli"
-	"gopkg.in/h2non/filetype.v1"
 	"io"
 	"io/ioutil"
 	"log"
@@ -14,6 +8,10 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/rwcarlsen/goexif/exif"
+	"github.com/urfave/cli"
+	"gopkg.in/h2non/filetype.v1"
 )
 
 // Copy the src file to dst. Any existing file will be overwritten and will not
@@ -42,7 +40,7 @@ func Copy(src, dst string, nopreserve bool) error {
 	return nil
 }
 
-type FileInfoWrapper struct {
+type fileinfowrapper struct {
 	Info    os.FileInfo
 	Path    string
 	Hash    string
@@ -51,13 +49,13 @@ type FileInfoWrapper struct {
 
 // Takes in a directory path. Recursively crawls the directory and outputs a
 // list of paths of files in that directory and subdirectories
-func ls_imgs(dir string) []FileInfoWrapper {
+func ls_imgs(dir string) []fileinfowrapper {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		//log.Fatalf("dir: %s, err: %s", dir, err)
 		log.Println(err)
 	}
-	var fileinfos []FileInfoWrapper
+	var fileinfos []fileinfowrapper
 	for _, file := range files {
 		if file.IsDir() {
 			//if the file is a directory, recursively add the directory's contents
@@ -92,16 +90,20 @@ func ls_imgs(dir string) []FileInfoWrapper {
 
 				//now we generate a hash, which might be useful for checking for
 				//duplicates
-				buff, err := ioutil.ReadFile(fullpath)
-				if err != nil {
-					log.Fatal(err)
-				}
-				hasher := sha256.New()
-				hasher.Write(buff)
-				if err != nil {
-					log.Fatal(err)
-				}
-				fileinfo := FileInfoWrapper{file, fullpath, hex.EncodeToString(hasher.Sum(nil)), tm}
+				/*
+					buff, err := ioutil.ReadFile(fullpath)
+					if err != nil {
+						log.Fatal(err)
+					}
+					hasher := sha256.New()
+					hasher.Write(buff)
+					if err != nil {
+						log.Fatal(err)
+					}
+					//put hex.EncodeToString(hasher.Sum(nil)) in struct if necessary
+				*/
+
+				fileinfo := fileinfowrapper{file, fullpath, "", tm}
 				fileinfos = append(fileinfos, fileinfo)
 			}
 		}
